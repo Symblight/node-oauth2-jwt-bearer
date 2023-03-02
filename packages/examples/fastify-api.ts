@@ -6,9 +6,17 @@ const app = fastify();
 app.register(fastifyOauth2, {
   audience: '',
   issuerBaseURL: ``,
-  jwksUri: '',
-  algorithms: ['RS256']
 });
+declare module 'fastify' {
+  interface FastifyInstance {
+    Oauth2: any;
+  }
+}
+declare module 'fastify' {
+  interface FastifyRequest {
+    auth: any;
+  }
+}
 
 const checkJwt = async (req: FastifyRequest, reply: FastifyReply) => {
   const jwt = app.Oauth2.getToken(
@@ -20,7 +28,7 @@ const checkJwt = async (req: FastifyRequest, reply: FastifyReply) => {
   return await app.Oauth2.verifyJwt(jwt);
 };
 
-app.get('/', async function (request, reply) {
+app.get('/userinfo', async function (request, reply) {
   request.auth = await checkJwt(request, reply);
   return reply
     .status(200)
