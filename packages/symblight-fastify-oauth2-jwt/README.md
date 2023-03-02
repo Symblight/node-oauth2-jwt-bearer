@@ -11,7 +11,7 @@ This package supports the following tooling versions:
 Using [npm](https://npmjs.org) in your project directory run the following command:
 
 ```shell
-npm install @symblight/fastify-oauth2-jwt-bearer
+npm install symblight-fastify-oauth2-jwt
 ```
 
 ## Getting started
@@ -24,12 +24,12 @@ AUDIENCE=https://my-api.com
 ```
 
 ```js
-const { fastifyOauth2 } = require('fastify-oauth2-jwt-bearer');
+const { fastifyOauth2 } = require("symblight-fastify-oauth2-jwt");
 app.register(fastifyOauth2, {
-  audience: '',
+  audience: "",
   issuerBaseURL: ``,
-  jwksUri: '',
-  algorithms: ['RS256'],
+  jwksUri: "",
+  algorithms: ["RS256"],
 });
 ```
 
@@ -39,16 +39,16 @@ const checkJwt = async (req, reply) => {
     req.headers,
     req.query,
     req.body,
-    !!reply.header('Content-type', 'urlencoded')
+    !!reply.header("Content-type", "urlencoded")
   );
   return await app.Oauth2.verifyJwt(jwt);
 };
 
-app.get('/', async function (request, reply) {
+app.get("/", async function (request, reply) {
   request.auth = await checkJwt(request, reply);
   return reply
     .status(200)
-    .header('Content-Type', 'application/json; charset=utf-8')
+    .header("Content-Type", "application/json; charset=utf-8")
     .send(request.auth?.payload);
 });
 ```
