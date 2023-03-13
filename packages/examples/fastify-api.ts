@@ -19,13 +19,13 @@ declare module 'fastify' {
 }
 
 const checkJwt = async (req: FastifyRequest, reply: FastifyReply) => {
-  const jwt = app.Oauth2.getToken(
+  const jwt = app.getToken(
     req.headers,
     req.query,
     req.body,
     !!reply.header('Content-type', 'urlencoded')
   );
-  return await app.Oauth2.verifyJwt(jwt);
+  return await app.verifyJwt(jwt);
 };
 
 app.get('/userinfo', async function (request, reply) {

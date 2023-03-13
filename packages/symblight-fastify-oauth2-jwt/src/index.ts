@@ -1,11 +1,23 @@
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import fp from 'fastify-plugin';
-import { jwtVerifier } from 'access-token-jwt';
+import {
+  jwtVerifier,
+  claimCheck,
+  ClaimCheck,
+  claimIncludes,
+  ClaimIncludes,
+  VerifyJwt,
+  JWTPayload,
+} from 'access-token-jwt';
 import { getToken } from 'oauth2-bearer';
 
+type ClaimChecker = (payload?: JWTPayload) => void;
 declare module 'fastify' {
   interface FastifyInstance {
-    Oauth2: any;
+    verifyJwt: VerifyJwt
+    getToken: (headers: any, query?: any | undefined, body?: any | undefined, urlEncoded?: boolean | undefined) => string
+    claimCheck: ClaimCheck
+    claimIncludes: ClaimIncludes<ClaimChecker>
   }
 }
 
@@ -16,8 +28,13 @@ export async function auth(
 ) {
   const verifyJwt = jwtVerifier(opts);
 
-  fastify.decorate('Oauth2', { verifyJwt, getToken });
+  fastify.decorate('verifyJwt', verifyJwt);
+  fastify.decorate('getToken', getToken);
+  fastify.decorate('claimCheck', claimCheck);
+  fastify.decorate('claimIncludes', claimIncludes);
+  
   done();
 }
+
 
 export const fastifyOauth2 = fp(auth);
