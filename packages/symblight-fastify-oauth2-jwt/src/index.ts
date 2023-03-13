@@ -14,10 +14,15 @@ import { getToken } from 'oauth2-bearer';
 type ClaimChecker = (payload?: JWTPayload) => void;
 declare module 'fastify' {
   interface FastifyInstance {
-    verifyJwt: VerifyJwt
-    getToken: (headers: any, query?: any | undefined, body?: any | undefined, urlEncoded?: boolean | undefined) => string
-    claimCheck: ClaimCheck
-    claimIncludes: ClaimIncludes<ClaimChecker>
+    verifyJwt: VerifyJwt;
+    getToken: (
+      headers: any,
+      query?: any | undefined,
+      body?: any | undefined,
+      urlEncoded?: boolean | undefined
+    ) => string;
+    claimCheck: ClaimCheck;
+    claimIncludes: ClaimIncludes<ClaimChecker>;
   }
 }
 
@@ -32,9 +37,10 @@ export async function auth(
   fastify.decorate('getToken', getToken);
   fastify.decorate('claimCheck', claimCheck);
   fastify.decorate('claimIncludes', claimIncludes);
-  
+
   done();
 }
 
-
 export const fastifyOauth2 = fp(auth);
+
+export { VerifyJwt, JWTPayload, ClaimCheck, ClaimChecker, ClaimIncludes };
