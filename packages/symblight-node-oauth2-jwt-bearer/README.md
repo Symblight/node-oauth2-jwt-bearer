@@ -11,7 +11,7 @@ This package supports the following tooling versions:
 Using [npm](https://npmjs.org) in your project directory run the following command:
 
 ```shell
-npm install symblight-fastify-oauth2-jwt
+npm install symblight-node-oauth2-jwt-bearer
 ```
 
 ## Getting started
@@ -24,31 +24,25 @@ AUDIENCE=https://my-api.com
 ```
 
 ```js
-const { fastifyOauth2 } = require("symblight-fastify-oauth2-jwt");
-app.register(fastifyOauth2, {
-  audience: "",
-  issuerBaseURL: ``,
-  jwksUri: "",
-  algorithms: ["RS256"],
-});
-```
+const { getToken, jwtVerifier } = require('symblight-node-oauth2-jwt-bearer');
 
-```js
-const checkJwt = async (req, reply) => {
-  const jwt = app.Oauth2.getToken(
-    req.headers,
-    req.query,
-    req.body,
-    !!reply.header("Content-type", "urlencoded")
-  );
-  return await app.Oauth2.verifyJwt(jwt);
-};
+async function middleware(req: Request, res: Response, next: NextFunction) {
+  try {
+    const verifyJwt = jwtVerifier({
+      audience: process.env.AUDIENCE,
+      issuerBaseURL: process.env.ISSUER_BASE_URL,
+    });
 
-app.get("/", async function (request, reply) {
-  request.auth = await checkJwt(request, reply);
-  return reply
-    .status(200)
-    .header("Content-Type", "application/json; charset=utf-8")
-    .send(request.auth?.payload);
-});
+    const jwt = getToken(
+      req.headers,
+      req.query,
+      req.body,
+      !!req.is('urlencoded')
+    );
+    req.auth = await verifyJwt(jwt);
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
 ```
