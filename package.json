@@ -9,6 +9,7 @@
     "packages/access-token-jwt",
     "packages/express-oauth2-jwt-bearer",
     "packages/symblight-fastify-oauth2-jwt",
+    "packages/symblight-node-oauth2-jwt-bearer",
     "packages/examples"
   ],
   "scripts": {
